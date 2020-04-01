@@ -5,8 +5,11 @@
     <title>Title</title>
 </head>
 <body>
-    {% for post in posts %}
-        <p>{{ post }}</p>
+    {% for category in categories %}
+        <p><a href="{% url 'category' category.slug %}">{{ category.name }}</a></p>
+    {% endfor %}
+    {% for p in post %}
+        <p><a href="{% url 'post_detail' p.slug %}">{{ p.slug }}</a></p>
     {% endfor %}
 </body>
 </html>
