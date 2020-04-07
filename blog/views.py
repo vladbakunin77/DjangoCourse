@@ -26,7 +26,6 @@ class PostDetailView(View):
     def get(self, request, category , slug):
         category_list = Category.objects.all()
         post = Post.objects.get(slug=slug)
-        return render(request, 'blog/post_detail.html', {'categories' : category_list,
-                                                      'post' : post
-                                                      })
+        #comments = Comment.objects.filter(post=post)
+        return render(request, post.template, {'categories' : category_list, 'post' : post,})
 

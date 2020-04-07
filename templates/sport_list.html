@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
 <body>
+    <h1>Спорт</h1>
     {% for category in categories %}
         <p><a href="{% url 'category' category.slug %}">{{ category.name }}</a></p>
     {% endfor %}
@@ -18,12 +13,7 @@
     <small> Автор : {{ post.author }} - {{ post.published_date }}</small>
     <br>
     <h4>Комментарии</h4>
-    <!--{% for comment in comments %}
-        Пользователь - {{ comment.author }}<br>
-        {{ comment.text }}<br>
-        Добавлен - {{ comment.created_date }}<br><br>
-    {% endfor %} -->
-    {% for comment in post.comments.all %}
+    {% for comment in post.comment_set.all %}
         Пользователь - {{ comment.author }}<br>
         {{ comment.text }}<br>
         Добавлен - {{ comment.created_date }}<br><br>

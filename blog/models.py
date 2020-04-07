@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from mptt.models import MPTTModel
 from mptt.fields import TreeForeignKey
 from django.utils import timezone
+from django.urls import reverse
 
 class Category(MPTTModel):
     '''Модель категорий'''
@@ -82,7 +83,12 @@ class Post(models.Model):
     status = models.BooleanField('Для зарегестрированных', default=False)
     sort = models.PositiveIntegerField('порядок', default=0)
     def get_absolute_url(self):
-        return reverse('post_detail', kwargs={'category':self.category.slug,'post':self.slug})
+        return reverse('detail_post', kwargs={'category':self.category.slug,'slug':self.slug})
+    def get_tags(self):
+        return self.tags.all()
+    def get_comments_count(self):
+        return self.comments.count()
+
 class Comment(models.Model):
     '''Модель комментариев'''
     text = models.TextField(verbose_name='Текст',max_length=100)
@@ -94,6 +100,7 @@ class Comment(models.Model):
         Post,
         verbose_name='Статья',
         on_delete=models.CASCADE,
+        related_name='comments'
     )
     author = models.ForeignKey(
         User,
