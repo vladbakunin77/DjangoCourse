@@ -8,7 +8,7 @@ from django.urls import reverse
 class Category(MPTTModel):
     '''Модель категорий'''
     name = models.CharField(verbose_name='Имя', max_length=100)
-    slug = models.SlugField("Url", max_length=100)
+    slug = models.SlugField("Url", max_length=100, unique=True)
     description = models.TextField('Описание', max_length=100, default='', blank=True)
     def __str__(self):
         return self.name
@@ -27,10 +27,13 @@ class Category(MPTTModel):
     published = models.BooleanField('Отображать?', default=True)
     paginated = models.PositiveIntegerField('Колличество новостей на странице', default=5)
     sort = models.PositiveIntegerField('Порядок', default=0)
+    def get_absolute_url(self):
+        return reverse('category', kwargs = {'category_slug': self.slug})
+
 class Tag(models.Model):
     '''Модель тэгов'''
     name = models.CharField(verbose_name='Тэг', max_length=100)
-    slug = models.SlugField(verbose_name='url', max_length=100)
+    slug = models.SlugField(verbose_name='url', max_length=100,unique=True)
     published = models.BooleanField('Отображать?', default=True)
     def __str__(self):
         return self.name
@@ -43,7 +46,7 @@ class Post(models.Model):
     mini_text = models.TextField(verbose_name='Текст',max_length=100)
     text = models.TextField(verbose_name='Основной текст', max_length=500)
     created_date = models.DateTimeField(verbose_name='Дата создания',max_length=50, auto_now_add=True)
-    slug = models.SlugField(verbose_name='Url', max_length=100)
+    slug = models.SlugField(verbose_name='Url', max_length=100, unique=True)
     subtitle = models.CharField('Под заголовок', max_length=100, blank=True, null=True)
     def __str__(self):
         return self.title
@@ -88,6 +91,8 @@ class Post(models.Model):
         return self.tags.all()
     def get_comments_count(self):
         return self.comments.count()
+    def get_category_template(self):
+        return self.category.template()
 
 class Comment(models.Model):
     '''Модель комментариев'''
