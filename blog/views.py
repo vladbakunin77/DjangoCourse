@@ -1,8 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.views.generic.base import View
 from .models import Category, Post, Tag, Comment
 from datetime import datetime
+from .forms import CommentForm
 
 
 #def home(request):
@@ -38,9 +39,28 @@ class PostDetailView(View):
     def get(self, request, **kwargs):
         category_list = Category.objects.all()
         post = get_object_or_404(Post, slug=kwargs.get('slug'))
-        return render(request, post.template, {'categories' : category_list, 'post' : post,})
+        form = CommentForm()
+        return render(request, post.template, {'form' : form, 'categories' : category_list, 'post' : post,})
+    def post(self, request, **kwargs):
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.post = Post.objects.get(slug=kwargs.get('slug'))
+            form.author = request.user
+            form.save()
+        return redirect(request.path)
+        #return redirect(f"/{kwargs.get('category')}/{kwargs.get('slug')}/")
 
 #class TagView(View):
  #   def get(self, request, slug):
   #      posts = Post.objects.filter(tags__slug=slug, published=True)
    #     return render(request, posts.firs().get_category_template(), {'post_list': posts})
+#class CreateCommentView(View):
+ #   def post(self, request, pk):
+  #      form = CommentForm(request.POST)
+   #     if form.is_valid():
+    #        form = form.save(commit=False)
+     #       form.post_id=pk
+      #      form.author = request.user
+       #     form.save
+        #return HttpResponse(status=201)
